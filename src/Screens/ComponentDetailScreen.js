@@ -1,74 +1,71 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Modal, ScrollView, View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
 const ComponentDetailScreen = ({ component, onClose }) => {
-    const { image, date, amount, extractedText } = component;
-
     return (
-        <View style={styles.container}>
-            {image ? (
-                <Image source={{ uri: image }} style={styles.image} />
-            ) : null}
-
-            <View style={styles.detailsContainer}>
-                <View style={styles.row}>
-                    <Text style={styles.label}>Date:</Text>
-                    <Text style={styles.text}>{date}</Text>
+        <Modal animationType="slide" transparent={false} visible={true}>
+            <ScrollView
+                contentContainerStyle={{
+                    flexGrow: 1,
+                    backgroundColor: '#FDF5E6',
+                    paddingHorizontal: 16,
+                }}
+            >
+                {component.image && (
+                    <View style={styles.imageContainer}>
+                        <Image
+                            source={{ uri: component.image }}
+                            style={styles.fullImage}
+                            resizeMode="contain"
+                        />
+                    </View>
+                )}
+                <View style={styles.modalContent}>
+                    <ScrollView>
+                        <View style={styles.componentInfo}>
+                            <Text style={styles.componentName}>{component.name}</Text>
+                            <Text>Date: {component.date}</Text>
+                            <Text>Amount: {component.amount}</Text>
+                            <Text>Extracted Text: {component.extractedText}</Text>
+                        </View>
+                    </ScrollView>
                 </View>
-
-                <View style={styles.row}>
-                    <Text style={styles.label}>Amount:</Text>
-                    <Text style={styles.text}>{amount}</Text>
-                </View>
-
-                <View style={styles.row}>
-                    <Text style={styles.label}>Extracted Text:</Text>
-                    <Text style={styles.text}>{extractedText}</Text>
-                </View>
-            </View>
-
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                <Icon name="close" size={24} color="black" />
-            </TouchableOpacity>
-        </View>
+                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                    <Text style={styles.closeButtonText}>Close</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </Modal>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FDF5E6',
-        padding: 16,
+    imageContainer: {
+        marginBottom: 20,
     },
-    image: {
+    fullImage: {
         width: '100%',
-        height: 200,
-        resizeMode: 'contain',
-        marginBottom: 16,
+        aspectRatio: 1,
     },
-    detailsContainer: {
-        backgroundColor: 'white',
-        borderRadius: 8,
-        padding: 16,
-        marginBottom: 16,
-    },
-    row: {
-        flexDirection: 'row',
+    componentInfo: {
         alignItems: 'center',
-        marginBottom: 8,
     },
-    label: {
-        flex: 1,
+    componentName: {
+        fontSize: 16,
         fontWeight: 'bold',
-    },
-    text: {
-        flex: 2,
+        marginBottom: 10,
     },
     closeButton: {
-        position: 'absolute',
-        top: 16,
-        right: 16,
+        backgroundColor: '#f2f2f2',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 5,
+        marginTop: 20,
+    },
+    closeButtonText: {
+        alignSelf: 'center',
+        fontSize: 16,
+        fontWeight: 'bold',
+        fontStyle: 'italic',
     },
 });
 

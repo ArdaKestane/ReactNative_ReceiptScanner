@@ -1,8 +1,13 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const MainScreen = ({ componentsData, onComponentPress, onDeleteComponent }) => {
+    const deleteComponent = (component) => {
+        const updatedComponents = componentsData.filter((c) => c !== component);
+        onDeleteComponent(updatedComponents);
+    };
+
     return (
         <ScrollView
             contentContainerStyle={{
@@ -15,21 +20,30 @@ const MainScreen = ({ componentsData, onComponentPress, onDeleteComponent }) => 
             {componentsData.map((component, index) => (
                 <TouchableOpacity
                     key={index}
-                    style={styles.componentContainer}
+                    style={{
+                        marginVertical: 2.5,
+                        marginBottom: 10,
+                        backgroundColor: 'white',
+                        borderRadius: 10,
+                        padding: 10,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}
                     onPress={() => onComponentPress(component)}
                 >
-                    <View style={styles.componentInfo}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image
                             source={{ uri: component.image }}
-                            style={styles.componentImage}
+                            style={{ width: 50, height: 50, marginRight: 10, borderRadius: 25 }}
                         />
                         <View>
                             <Text>
-                                <Text style={styles.boldText}>Date: </Text>
+                                <Text style={{ fontWeight: 'bold' }}>Date: </Text>
                                 {component.date}
                             </Text>
                             <Text>
-                                <Text style={styles.boldText}>Amount: </Text>
+                                <Text style={{ fontWeight: 'bold' }}>Amount: </Text>
                                 {component.amount}
                             </Text>
                         </View>
@@ -37,36 +51,11 @@ const MainScreen = ({ componentsData, onComponentPress, onDeleteComponent }) => 
                     <TouchableOpacity onPress={() => onDeleteComponent(component)}>
                         <Icon name="delete" size={20} color="red" />
                     </TouchableOpacity>
+
                 </TouchableOpacity>
             ))}
         </ScrollView>
     );
 };
-
-const styles = StyleSheet.create({
-    componentContainer: {
-        marginVertical: 2.5,
-        marginBottom: 10,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    componentInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    componentImage: {
-        width: 50,
-        height: 50,
-        marginRight: 10,
-        borderRadius: 25,
-    },
-    boldText: {
-        fontWeight: 'bold',
-    },
-});
 
 export default MainScreen;

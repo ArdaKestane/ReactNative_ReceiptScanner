@@ -43,14 +43,24 @@ const App = () => {
     saveComponentsData();
   }, [componentsData]);
 
-  const handleComponentPress = component => {
+  useEffect(() => {
+    if (selectedComponent) {
+      return () => {
+        setSelectedComponent(null);
+      };
+    }
+  }, [selectedComponent]);
+
+  const handleComponentPress = (component) => {
     setSelectedComponent(component);
   };
 
-  const handleDeleteComponent = component => {
-    const updatedComponents = componentsData.filter(c => c !== component);
+  const handleDeleteComponent = (component) => {
+    const updatedComponents = componentsData.filter((c) => c !== component);
     setComponentsData(updatedComponents);
+    saveComponentsData();
   };
+
 
   const handleDocumentScanned = async (image, extractedText) => {
     setScannedImage(image);
@@ -67,12 +77,19 @@ const App = () => {
     const newComponent = {
       image,
       date: new Date().toLocaleDateString(),
-      amount: amount,
+      amount,
       extractedText,
     };
 
-    setComponentsData(prevData => [...prevData, newComponent]);
+    setComponentsData((prevData) => [...prevData, newComponent]);
+
+    // Reset the scannedImage state to null
+    setScannedImage(null);
+
+    // Navigate back to the main screen
+    setActiveScreen('main');
   };
+
 
   const renderScreen = () => {
     switch (activeScreen) {
@@ -95,13 +112,13 @@ const App = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {renderScreen()}
       {selectedComponent && (
         <ComponentDetailScreen
           component={selectedComponent}
           onClose={() => setSelectedComponent(null)}
         />
       )}
+      <View style={{ flex: 1 }}>{renderScreen()}</View>
       <View style={styles.tabBar}>
         <TouchableOpacity onPress={() => setActiveScreen('main')}>
           <Text>Main</Text>
