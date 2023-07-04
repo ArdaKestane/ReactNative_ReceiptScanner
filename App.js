@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MainScreen from './src/Screens/MainScreen';
 import CameraScreen from './src/Screens/CameraScreen';
 import ProfileScreen from './src/Screens/ProfileScreen';
@@ -10,6 +11,46 @@ const App = () => {
   const [scannedImage, setScannedImage] = useState(null);
   const [componentsData, setComponentsData] = useState([]);
   const [selectedComponent, setSelectedComponent] = useState(null);
+
+  useEffect(() => {
+    // Load componentsData from AsyncStorage when the app starts
+    loadComponentsData();
+  }, []);
+
+  const loadComponentsData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('componentsData');
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+        setComponentsData(parsedData);
+      } else {
+        setComponentsData([]);
+      }
+    } catch (error) {
+      console.log('Error loading components:', error);
+    }
+  };
+
+  const saveComponentsData = async () => {
+    try {
+      await AsyncStorage.setItem('componentsData', JSON.stringify(componentsData));
+    } catch (error) {
+      console.log('Error saving components:', error);
+    }
+  };
+
+  useEffect(() => {
+    saveComponentsData();
+  }, [componentsData]);
+
+  const handleComponentPress = component => {
+    setSelectedComponent(component);
+  };
+
+  const handleDeleteComponent = component => {
+    const updatedComponents = componentsData.filter(c => c !== component);
+    setComponentsData(updatedComponents);
+  };
 
   const handleDocumentScanned = async (image, extractedText) => {
     setScannedImage(image);
@@ -31,15 +72,6 @@ const App = () => {
     };
 
     setComponentsData(prevData => [...prevData, newComponent]);
-  };
-
-  const handleComponentPress = component => {
-    setSelectedComponent(component);
-  };
-
-  const handleDeleteComponent = component => {
-    const updatedComponents = componentsData.filter(c => c !== component);
-    setComponentsData(updatedComponents);
   };
 
   const renderScreen = () => {

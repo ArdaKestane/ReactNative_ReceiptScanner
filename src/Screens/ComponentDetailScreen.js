@@ -7,7 +7,9 @@ const ComponentDetailScreen = ({ component, onClose }) => {
 
     return (
         <View style={styles.container}>
-            <Image source={image} style={styles.image} />
+            {image ? (
+                <Image source={{ uri: image }} style={styles.image} />
+            ) : null}
 
             <View style={styles.detailsContainer}>
                 <View style={styles.row}>
